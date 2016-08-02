@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\CommunityLinkVote;
 use App\Exceptions\CommunityLinkAlreadySubmitted;
 use Illuminate\Database\Eloquent\Model;
 
@@ -64,5 +65,10 @@ class CommunityLink extends Model
     public function channel()
     {
         return $this->belongsTo(Channel::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(CommunityLinkVote::class, 'community_link_id');
     }
 }
