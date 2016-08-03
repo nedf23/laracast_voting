@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\CommunityLink;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -29,13 +30,22 @@ class User extends Authenticatable
         return !! $this->trusted;
     }
 
-    public function voteFor(CommunityLink $link)
+    public function votes()
     {
-        return $link->votes()->create(['user_id' => $this->id]);
+        return $this->belongsToMany(CommunityLink::class, 'community_links_votes')
+            ->withTimestamps();
     }
 
     public function votedFor(CommunityLink $link)
     {
         return $link->votes->contains('user_id', $this->id);
+    }
+
+    public function toggleVoteFor(CommunityLink $link)
+    {
+        return CommunityLinkVote::firstOrNew([
+            'user_id' => $this->id,
+            'community_link_id' => $link->id
+        ])->toggle();
     }
 }
